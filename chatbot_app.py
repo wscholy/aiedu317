@@ -1,18 +1,20 @@
 import streamlit as st
 from anthropic import Anthropic
 
-# 다크모드 설정
+# 페이지 설정 (다크모드 포함)
 st.set_page_config(
     page_title="중3 생물 학습 도우미",
     page_icon="🧬",
     layout="wide",
-    initial_sidebar_state="expanded",
-    theme=st.config.get_config_file()  # 다크모드를 위한 설정
+    initial_sidebar_state="expanded"
 )
 
 # CSS를 통한 다크모드 강제 적용
 st.markdown("""
     <style>
+    :root {
+        color-scheme: dark;
+    }
     [data-testid="stAppViewContainer"] {
         background-color: #0e1117;
         color: #e6edf3;
@@ -20,16 +22,11 @@ st.markdown("""
     [data-testid="stSidebar"] {
         background-color: #161b22;
     }
+    [data-testid="stChatMessage"] {
+        background-color: #161b22;
+    }
     </style>
     """, unsafe_allow_html=True)
-
-# 페이지 설정
-st.set_page_config(
-    page_title="중3 생물 학습 도우미",
-    page_icon="🧬",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
 
 # 사이드바 - API 키 입력 및 정보
 with st.sidebar:
@@ -139,7 +136,7 @@ if st.session_state.api_key_provided:
 - 불릿 포인트 사용
 - 중요한 용어는 **굵게** 표시"""
                     
-                    # Claude API 호출 (모델명 수정: claude-3-5-haiku-20250514)
+                    # Claude API 호출
                     response = st.session_state.client.messages.create(
                         model="claude-3-5-haiku-20250514",
                         max_tokens=1024,
@@ -178,4 +175,4 @@ with col2:
     st.caption("Made with Streamlit + Claude API")
 
 with col3:
-    st.caption("v1.1 (Dark Mode)")
+    st.caption("v1.2 (Dark Mode)")
