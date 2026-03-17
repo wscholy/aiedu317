@@ -1,6 +1,28 @@
 import streamlit as st
 from anthropic import Anthropic
 
+# 다크모드 설정
+st.set_page_config(
+    page_title="중3 생물 학습 도우미",
+    page_icon="🧬",
+    layout="wide",
+    initial_sidebar_state="expanded",
+    theme=st.config.get_config_file()  # 다크모드를 위한 설정
+)
+
+# CSS를 통한 다크모드 강제 적용
+st.markdown("""
+    <style>
+    [data-testid="stAppViewContainer"] {
+        background-color: #0e1117;
+        color: #e6edf3;
+    }
+    [data-testid="stSidebar"] {
+        background-color: #161b22;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
 # 페이지 설정
 st.set_page_config(
     page_title="중3 생물 학습 도우미",
@@ -23,10 +45,11 @@ with st.sidebar:
         "📚 **중3 생물 학습 도우미**\n\n"
         "이 챗봇은 중학교 3학년 생물 교육과정의 내용을 바탕으로 "
         "학생들의 학습을 돕기 위해 설계되었습니다.\n\n"
-        "- 세포와 유전\n"
-        "- 생식과 발생\n"
-        "- 항상성과 신경계\n"
-        "- 생태계와 환경"
+        "**주요 학습 영역**\n"
+        "- 🔬 세포와 유전\n"
+        "- 👶 생식과 발생\n"
+        "- 🧠 항상성과 신경계\n"
+        "- 🌍 생태계와 환경"
     )
 
 # 메인 페이지
@@ -106,14 +129,19 @@ if st.session_state.api_key_provided:
 **응답 방식**:
 1. 학생의 질문을 명확하게 이해
 2. 핵심 개념을 먼저 설명
-3. 구체적인 예시와 그림 설명으로 이해 향상
+3. 구체적인 예시와 설명으로 이해 향상
 4. 어려운 용어는 쉽게 풀어 설명
 5. 학생의 흥미를 유지할 수 있는 방식으로 설명
-6. 필요시 추가 질문 제시로 깊은 학습 유도"""
+6. 필요시 추가 질문 제시로 깊은 학습 유도
+
+**응답 형식**:
+- 마크다운을 활용한 명확한 구조화
+- 불릿 포인트 사용
+- 중요한 용어는 **굵게** 표시"""
                     
-                    # Claude API 호출
+                    # Claude API 호출 (모델명 수정: claude-3-5-haiku-20250514)
                     response = st.session_state.client.messages.create(
-                        model="claude-3-5-haiku-20241022",
+                        model="claude-3-5-haiku-20250514",
                         max_tokens=1024,
                         system=system_prompt,
                         messages=st.session_state.messages
@@ -132,16 +160,17 @@ if st.session_state.api_key_provided:
                     
                 except Exception as e:
                     st.error(f"❌ 오류 발생: {str(e)}")
-                    st.info("API 키를 다시 확인해주세요.")
+                    st.info("API 키를 다시 확인해주세요. (유효한 API 키인지 확인)")
 
 else:
-    st.warning("사이드바에서 API 키를 입력한 후 시작하세요.")
+    st.info("👈 사이드바에서 API 키를 입력한 후 시작하세요.")
 
 # 하단 정보
 st.divider()
 col1, col2, col3 = st.columns(3)
+
 with col1:
-    if st.button("🔄 대화 초기화"):
+    if st.button("🔄 대화 초기화", use_container_width=True):
         st.session_state.messages = []
         st.rerun()
 
@@ -149,4 +178,4 @@ with col2:
     st.caption("Made with Streamlit + Claude API")
 
 with col3:
-    st.caption("v1.0")
+    st.caption("v1.1 (Dark Mode)")
